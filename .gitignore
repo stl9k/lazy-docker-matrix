@@ -1,0 +1,26 @@
+nginx/nginx.conf
+element/config.json
+certbot/conf/accounts/
+certbot/conf/archive/
+certbot/conf/live/
+certbot/conf/renewal/
+certbot/conf/renewal-hooks/
+certbot/www/*
+matrix/data/*.log.config
+matrix/data/*.signing.key
+matrix/data/homeserver.db
+matrix/data/homeserver.db-shm
+matrix/data/homeserver.db-wal
+matrix/data/homeserver.yaml
+matrix/data/media_store/
+.env
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Keep directory structure but ignore contents
+!certbot/conf/.gitkeep
+!certbot/www/.gitkeep
+!matrix/data/.gitkeep
