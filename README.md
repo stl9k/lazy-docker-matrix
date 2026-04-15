@@ -14,8 +14,8 @@ Setup for **Matrix Synapse** + **Element Web** with automated **Nginx** reverse 
 
 ```bash
 # Clone the repository
-git clone https://github.com/stl9k/talaria.git
-cd talaria
+git clone https://github.com/stl9k/lazy-docker-matrix.git
+cd lazy-docker-matrix/
 
 # Install Docker (if not already installed)
 make install-docker
