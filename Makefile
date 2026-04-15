@@ -1,12 +1,10 @@
--include .env
-export
-
-.PHONY: help install-docker setup generate-config configure-synapse get-certs create-admin up logs clean generate-nginx-config generate-element-config
+.PHONY: help install-docker setup generate-config configure-synapse get-certs create-admin up logs clean generate-nginx-config generate-element-config generate-all-configs
 
 help:
 	@echo "Available commands:"
 	@echo "  make install-docker       - Install Docker on a clean VPS"
 	@echo "  make setup                - Prepare .env file and required directories"
+	@echo "  make generate-all-configs - Generate ALL configuration files (nginx, element, synapse)"
 	@echo "  make generate-nginx-config - Generate nginx.conf from template"
 	@echo "  make generate-element-config - Generate element config.json from template"
 	@echo "  make generate-config      - Generate and configure Synapse homeserver.yaml"
@@ -21,7 +19,17 @@ install-docker:
 	@echo "Installing Docker..."
 	curl -fsSL https://get.docker.com | sudo sh
 
-	generate-nginx-config:
+setup:
+	@echo "Setting up environment..."
+	cp -n .env.example .env
+	@echo ">>> Please edit the .env file and set your domain, email, and passwords."
+	@echo ">>> After editing, run: make generate-all-configs"
+	mkdir -p certbot/{conf,www} element matrix/data nginx scripts
+	chmod +x scripts/*.sh
+
+generate-all-configs: generate-nginx-config generate-element-config generate-config
+
+generate-nginx-config:
 	@echo "Generating nginx configuration from template..."
 	@chmod +x scripts/generate_nginx_config.sh
 	./scripts/generate_nginx_config.sh
@@ -30,20 +38,6 @@ generate-element-config:
 	@echo "Generating Element configuration from template..."
 	@chmod +x scripts/generate_element_config.sh
 	./scripts/generate_element_config.sh
-
-generate-nginx-config:
-	@echo "Generating nginx configuration from template..."
-	@chmod +x scripts/generate_nginx_config.sh
-	./scripts/generate_nginx_config.sh
-
-setup:
-	@echo "Setting up environment..."
-	cp -n .env.example .env
-	@echo "Please edit the .env file and set your domain, email, and other parameters."
-	mkdir -p certbot/{conf,www} element matrix/data nginx scripts
-	chmod +x scripts/*.sh
-	$(MAKE) generate-nginx-config
-	$(MAKE) generate-element-config
 
 generate-config:
 	@echo "Generating and configuring Synapse..."
@@ -75,5 +69,5 @@ logs:
 clean:
 	@echo "Stopping all services and removing data..."
 	docker compose down -v
-	rm -rf matrix/data/homeserver.db certbot/conf
+	rm -rf matrix/data/homeserver.db certbot/conf/accounts certbot/conf/archive certbot/conf/live certbot/conf/renewal
 	@echo "Project cleaned."
